@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+
+<package-spec xmlns="urn:jboss:galleon:package:2.0" name="wildfly.s2i.common">
+    <dependencies>
+        <origin name="org.jboss.eap.cloud:eap-cloud-galleon-pack">
+            <package name="wildfly.s2i.common"/>
+        </origin>
+    </dependencies>
+</package-spec>
