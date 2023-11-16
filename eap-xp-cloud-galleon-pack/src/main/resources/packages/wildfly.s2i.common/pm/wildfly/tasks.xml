@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+
+<tasks xmlns="urn:wildfly:wildfly-feature-pack-tasks:3.0">
+    <append-file match="EXTRA_LAUNCH_SCRIPTS_MARKER" target="bin/launch/launch-config.sh" ignore="false">
+        <line>$JBOSS_HOME/bin/launch/mp-config.sh</line>
+    </append-file>
+</tasks>
+
