@@ -45,10 +45,10 @@
         <version.junit>4.13.2</version.junit>
         <version.inject>1</version.inject>
         <version.org.jboss.eap.xp>5.0.0.GA-redhat-SNAPSHOT</version.org.jboss.eap.xp>
-        <version.org.wildfly.core>21.0.3.Final-redhat-00001</version.org.wildfly.core>
+        <version.org.wildfly.core>21.0.5.Final-redhat-00001</version.org.wildfly.core>
         <version.org.wildfly.galleon-plugins>6.4.8.Final-redhat-00001</version.org.wildfly.galleon-plugins>
-        <version.org.jboss.eap.maven.plugin>1.0.0.Final-redhat-00001</version.org.jboss.eap.maven.plugin>
-        <version.org.jboss.eap.cloud.eap-cloud-galleon-pack>1.0.0.Final-redhat-SNAPSHOT</version.org.jboss.eap.cloud.eap-cloud-galleon-pack>
+        <version.org.jboss.eap.maven.plugin>1.0.0.Final-redhat-00014</version.org.jboss.eap.maven.plugin>
+        <version.org.jboss.eap.cloud.eap-cloud-galleon-pack>1.0.0.Final-redhat-00008</version.org.jboss.eap.cloud.eap-cloud-galleon-pack>
     </properties>
 
     <dependencyManagement>
