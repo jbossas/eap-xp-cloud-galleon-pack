@@ -49,6 +49,7 @@
     <packages>
         <!-- All modules are provisioned. Needed by this config that opens up to custom standalone.xml -->
         <package name="modules.all"/>
+        <package name="bin.jdrtools"/>
     </packages>
 </layer-spec>
 
