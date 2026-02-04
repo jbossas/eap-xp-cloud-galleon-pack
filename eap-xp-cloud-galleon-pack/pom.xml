@@ -30,26 +30,24 @@
     <description>EAP XP Galleon feature-pack for Cloud.</description>
     
     <dependencies>
-        <dependency>
-            <groupId>org.jboss.eap.cloud</groupId>
-            <artifactId>eap-cloud-galleon-pack</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.eap</groupId>
-          <artifactId>wildfly-ee-galleon-pack</artifactId>
-          <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.eap.xp</groupId>
-            <artifactId>wildfly-galleon-pack</artifactId>
-            <type>zip</type>
-        </dependency>
+      <dependency>
+        <groupId>org.jboss.eap.cloud</groupId>
+        <artifactId>eap-cloud-galleon-pack-shared</artifactId>
+        <type>pom</type>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.eap</groupId>
+        <artifactId>wildfly-ee-galleon-pack</artifactId>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.eap.xp</groupId>
+        <artifactId>wildfly-galleon-pack</artifactId>
+        <type>zip</type>
+      </dependency>
     </dependencies>
 
-    <properties>
-        <common.resources.directory>${basedir}/../common/target/resources</common.resources.directory>
-    </properties>
     <build>                
         <plugins>
             <plugin>
@@ -73,22 +71,64 @@
                 </executions>
             </plugin>
             <plugin>
+                <!-- Feature pack generation is vulnerable to leftover files in the target
+                     folder from previous builds, so always clean even if the clean lifecycle is not invoked -->
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>auto-clean</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-cloud-common-feature-pack-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.eap.cloud</groupId>
+                                    <artifactId>eap-cloud-galleon-pack-shared</artifactId>
+                                    <type>zip</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <!-- The feature pack build seems to ignore such things anyway, but to be
+                                 robust exclude artifact metadata content -->
+                            <excludes>**/pom.xml,META-INF,META-INF/**</excludes>
+                            <outputDirectory>${basedir}/target/unpacked-cloud-galleon-resources</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-common-feature-pack-resources</id>
+                        <id>copy-unpacked-cloud-galleon-resources</id>
                         <phase>process-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
                             <outputDirectory>${basedir}/target/resources</outputDirectory>
+                            <escapeString>\</escapeString>
                             <resources>
                                 <resource>
-                                    <directory>${common.resources.directory}</directory>
+                                    <directory>${basedir}/target/unpacked-cloud-galleon-resources</directory>
                                 </resource>
                             </resources>
+                            <overwrite>true</overwrite>
                         </configuration>
                     </execution>
                 </executions>

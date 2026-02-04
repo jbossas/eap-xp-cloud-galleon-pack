@@ -27,6 +27,12 @@
     <artifactId>eap-xp-cloud-galleon-pack-basic-testsuite</artifactId>
     <name>EAP XP cloud feature-pack basic testsuite</name>
     <description>Simply validate that the server can be provisioned and started (with bare-metal launcher)</description>
+    <properties>
+      <test.exclude.package.bootable>org.wildfly.cloud.bootable.runtime</test.exclude.package.bootable>
+      <test.exclude.package.scripts>org.wildfly.cloud.launch.scripts</test.exclude.package.scripts>
+      <test.excluded.paths.bootable>modules/system/layers/base/org/wildfly/cloud</test.excluded.paths.bootable>
+      <test.excluded.paths.scripts>bin/launch,bin/openshift-launch.sh,bin/jboss-cli.sh</test.excluded.paths.scripts>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -84,9 +90,6 @@
                             </manifest>
                         </channel>
                     </channels>-->
-                    <layers>
-                        <layer>cloud-default-mp-config</layer>
-                    </layers>
                     <galleon-options>
                         <jboss-fork-embedded>${plugin.fork.embedded}</jboss-fork-embedded>
                     </galleon-options>
@@ -110,8 +113,47 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>eap-xp-cloud-galleon-pack</artifactId>
                                     <version>${project.version}</version>
+                                    <excludedPackages>
+                                      <package>${test.exclude.package.bootable}</package>
+                                    </excludedPackages>
                                 </feature-pack>
                             </feature-packs>
+                            <layers>
+                              <layer>cloud-default-mp-config</layer>
+                            </layers>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>provision-bootable-jar</id>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                          <layers>
+                                <layer>jaxrs</layer>
+                                <layer>web-clustering</layer>
+                                <layer>microprofile-platform</layer>
+                            </layers>
+                            <feature-packs>
+                                <feature-pack>
+                                    <groupId>org.jboss.eap.xp</groupId>
+                                    <artifactId>wildfly-galleon-pack</artifactId>
+                                    <version>${version.org.jboss.eap.xp}</version>
+                                </feature-pack>
+                                <feature-pack>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>eap-xp-cloud-galleon-pack</artifactId>
+                                    <version>${project.version}</version>
+                                    <excludedPackages>
+                                      <package>${test.exclude.package.scripts}</package>
+                                    </excludedPackages>
+                                </feature-pack>
+                            </feature-packs>
+                            <bootable-jar>true</bootable-jar>
+                            <skipDeployment>true</skipDeployment>
+                            <provisioning-dir>server-bootable</provisioning-dir>
+                            <bootable-jar-name>server-bootable.jar</bootable-jar-name>
                         </configuration>
                     </execution>
                 </executions>
@@ -134,8 +176,30 @@
                         </goals>
                         <phase>test</phase>
                         <configuration>
-                            <systemPropertyVariables >
-                                <jboss.home>${project.basedir}/target/server</jboss.home>
+                          <systemPropertyVariables >
+                            <test.excluded.paths>${test.excluded.paths.bootable}</test.excluded.paths>
+                            <test.expected.paths>${test.excluded.paths.scripts}</test.expected.paths>
+                            <jboss.home>${project.basedir}/target/server</jboss.home>
+                          </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-wildfly-bootable</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <phase>test</phase>
+                        <configuration>
+                          <reportNameSuffix>bootable</reportNameSuffix>
+                            <systemPropertyVariables>
+                                <wildfly.bootable.jar>true</wildfly.bootable.jar>
+                                <test.expected.node.name>myhost</test.expected.node.name>
+                                <jboss.args>-Djboss.node.name=myhost</jboss.args>
+                                <wildfly.bootable.jar.jar>${basedir}/target/server-bootable.jar</wildfly.bootable.jar.jar>
+                                <wildfly.bootable.jar.install.dir>${basedir}/target/server-bootable-install</wildfly.bootable.jar.install.dir>
+                                <jboss.home>${basedir}/target/server-bootable-install</jboss.home>
+                                <test.excluded.paths>${test.excluded.paths.scripts}</test.excluded.paths>
+                                <test.expected.paths>${test.excluded.paths.bootable}</test.expected.paths>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
