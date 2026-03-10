@@ -63,7 +63,7 @@
                 <groupId>org.jboss.eap.plugins</groupId>
                 <artifactId>eap-maven-plugin</artifactId>
                 <configuration>
-                    <channels>
+                    <!--<channels>
                         <channel>
                             <manifest>
                                 <groupId>org.jboss.eap.channels</groupId>
@@ -83,7 +83,7 @@
                                 <version>${project.version}</version>
                             </manifest>
                         </channel>
-                    </channels>
+                    </channels>-->
                     <layers>
                         <layer>cloud-default-mp-config</layer>
                     </layers>
